@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
+import os
 import requests
 from lxml import html
+
+sys = os.sys
 
 class TreeTv:
 
@@ -86,6 +88,19 @@ class TreeTv:
 
         return playlist
 
+    def saveStream(self, url, filename='', path='.'):
+        if url:
+            if not filename:
+                fn = os.path.join(path, url.split('/')[-2])
+            else:
+                fn = os.path.join(path, filename[:])
+            print fn
+            stream = self.s.get(url, stream=True)
+            with open(fn, 'wb') as f:
+                for chunk in stream.iter_content(chunk_size=512 * 1024):
+                    if chunk: # filter out keep-alive new chunks
+                        f.write(chunk)
+            f.close()
 
 tt = TreeTv()
 
